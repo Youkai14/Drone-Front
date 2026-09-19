@@ -17,7 +17,7 @@
     text-shadow:0 0 8px rgba(0,255,255,.85),0 0 2px #000;font-size:14px;letter-spacing:1px}
 
   .panel{position:absolute;padding:8px 12px;border:1px solid rgba(0,255,255,.35);
-    background:rgba(0,20,25,.35);backdrop-filter:blur(2px);border-radius:4px}
+    background:rgba(0,20,25,.4);backdrop-filter:blur(2px);border-radius:4px}
 
   #topleft{top:calc(16px + env(safe-area-inset-top,0));left:calc(16px + env(safe-area-inset-left,0));line-height:1.7}
   #topright{top:calc(16px + env(safe-area-inset-top,0));right:calc(16px + env(safe-area-inset-right,0));text-align:right;line-height:1.7}
@@ -56,12 +56,12 @@
     background:rgba(0,20,25,.4);white-space:nowrap}
 
   #overlay{position:fixed;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;background:rgba(0,10,15,.85);
+    align-items:center;justify-content:center;background:rgba(0,10,15,.88);
     z-index:20;text-align:center;backdrop-filter:blur(4px);padding:20px;
     cursor:pointer;overflow-y:auto}
   #overlay h1{font-size:clamp(26px,6vw,62px);letter-spacing:6px;margin-bottom:10px;
     text-shadow:0 0 24px #0ff,0 0 60px #08f}
-  #overlay p{max-width:680px;line-height:1.85;font-size:14px;opacity:.9;margin:6px 0}
+  #overlay p{max-width:700px;line-height:1.85;font-size:14px;opacity:.9;margin:6px 0}
   kbd{display:inline-block;padding:2px 8px;border:1px solid #0ff;border-radius:4px;
     background:rgba(0,255,255,.1);margin:0 2px;font-size:12px}
   #startHint{margin-top:26px;font-size:16px;animation:blink 1.1s infinite;color:#7fffd4}
@@ -75,7 +75,6 @@
     transition:opacity .25s;pointer-events:none;z-index:11;text-align:center;
     text-shadow:0 0 24px currentColor;white-space:nowrap}
 
-  /* ══ Touch Controls ══ */
   #touchControls{position:fixed;inset:0;z-index:5;pointer-events:none;display:none}
   #touchControls.show{display:block}
   .stick-zone{position:absolute;bottom:0;width:50%;height:58%;
@@ -104,21 +103,24 @@
   #zoneLeft .stick-label{left:40%}
   #zoneRight .stick-label{left:60%}
 
-  /* ══ Drop Button ══ */
   #dropBtn{position:absolute;
     right:calc(7vmin + env(safe-area-inset-right,0));
     bottom:calc(44vmin + env(safe-area-inset-bottom,0));
     width:min(17vmin,84px);height:min(17vmin,84px);border-radius:50%;
-    border:2px solid rgba(255,90,90,.65);
-    background:radial-gradient(circle,rgba(255,70,70,.38),rgba(70,0,0,.55));
-    box-shadow:0 0 26px rgba(255,70,70,.4), inset 0 0 22px rgba(255,70,70,.25);
+    border:2px solid rgba(255,90,90,.7);
+    background:radial-gradient(circle,rgba(255,70,70,.42),rgba(70,0,0,.6));
+    box-shadow:0 0 26px rgba(255,70,70,.45), inset 0 0 22px rgba(255,70,70,.25);
     color:#faa;font-size:max(10px,2vmin);letter-spacing:2px;
     display:flex;align-items:center;justify-content:center;
     pointer-events:auto;touch-action:none;font-family:inherit;
     transition:transform .08s, box-shadow .1s, border-color .1s}
   #dropBtn.active{border-color:#f66;transform:scale(.92);
-    box-shadow:0 0 46px rgba(255,70,70,.85), inset 0 0 26px rgba(255,70,70,.4)}
+    box-shadow:0 0 46px rgba(255,70,70,.9), inset 0 0 26px rgba(255,70,70,.4)}
   #dropBtn.cool{opacity:.35}
+
+  #err{position:fixed;inset:auto 10px 10px 10px;padding:10px;background:#300;
+    color:#f88;font-size:12px;border:1px solid #f44;border-radius:4px;display:none;
+    z-index:99;white-space:pre-wrap;font-family:monospace;max-height:30vh;overflow:auto}
 
   @media (max-width:720px) {
     #hud{font-size:11px}
@@ -140,7 +142,7 @@
 <div id="hud">
   <div id="topleft" class="panel">
     <div class="label">ZIELE</div>
-    <div class="val" id="hTargets">0 / 10</div>
+    <div class="val" id="hTargets">0 / 8</div>
     <div class="label" style="margin-top:6px">MUNITION</div>
     <div class="val" id="hAmmo">15</div>
   </div>
@@ -192,7 +194,7 @@
 
 <div id="overlay">
   <h1>FPV DRONE STRIKER</h1>
-  <p>Zerstöre alle <b>10 Bodenzielscheiben</b> innerhalb von <b>90 Sekunden</b>.<br>
+  <p>Zerstöre alle <b>8 Bodenzielscheiben</b> in <b>90 Sekunden</b>.<br>
      Triff die <span style="color:#ff3366">Mitte</span> für maximale Punkte.</p>
   <p style="margin-top:14px">
     <kbd>W</kbd><kbd>S</kbd> Nicken · <kbd>A</kbd><kbd>D</kbd> Rollen ·
@@ -203,10 +205,12 @@
     🎮 <b>Gamepad:</b> L-Stick Gas/Gieren · R-Stick Nicken/Rollen · <b>A / RT</b> = Abwerfen<br>
     📱 <b>Touch:</b> zwei virtuelle Sticks + roter DROP-Button
   </p>
-  <p class="small" style="margin-top:14px">Der grüne Ring in der Mitte lädt Munition auf.<br>
-    Das Fadenkreuz auf dem Boden zeigt die voraussichtliche Einschlagstelle.</p>
+  <p class="small" style="margin-top:14px">Die grünen Lichtsäulen zeigen dir die Ziele.<br>
+    Der grüne Ring in der Mitte lädt Munition auf.</p>
   <div id="startHint">— TIPPEN / TASTE / STICK ZUM STARTEN —</div>
 </div>
+
+<div id="err"></div>
 
 <script type="importmap">
 { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
@@ -214,6 +218,13 @@
 
 <script type="module">
 import * as THREE from 'three';
+
+/* ═══════════════════════════ ERROR DISPLAY ═══════════════════════════ */
+const errEl = document.getElementById('err');
+window.addEventListener('error', e => {
+  errEl.style.display = 'block';
+  errEl.textContent += `[${e.message}] ${e.filename || ''}:${e.lineno || ''}\n`;
+});
 
 /* ═══════════════════════════ SETUP ═══════════════════════════ */
 
@@ -226,141 +237,169 @@ document.body.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 const SKY = 0x9fd0ff;
 scene.background = new THREE.Color(SKY);
-scene.fog = new THREE.Fog(SKY, 160, 560);
+scene.fog = new THREE.Fog(SKY, 180, 620);
 
-const camera = new THREE.PerspectiveCamera(105, innerWidth/innerHeight, 0.15, 1000);
+const camera = new THREE.PerspectiveCamera(105, innerWidth/innerHeight, 0.15, 1200);
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0x3a4a3a, 1.15));
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445544, 1.2));
 const sun = new THREE.DirectionalLight(0xfff3d0, 1.9);
-sun.position.set(90, 160, 60);
+sun.position.set(120, 200, 80);
 scene.add(sun);
 
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(3000, 3000),
+  new THREE.PlaneGeometry(4000, 4000),
   new THREE.MeshStandardMaterial({ color:0x3d6b39, roughness:1, metalness:0 })
 );
 ground.rotation.x = -Math.PI/2;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(3000, 300, 0x2c5230, 0x2c5230);
-grid.position.y = 0.03;
-grid.material.opacity = 0.5;
+const grid = new THREE.GridHelper(1000, 100, 0x2c5230, 0x335a37);
+grid.position.y = 0.04;
+grid.material.opacity = 0.6;
 grid.material.transparent = true;
 scene.add(grid);
 
 /* ═══════════════════════════ ZIELE ═══════════════════════════ */
 
-const TARGET_COUNT = 10;
+const TARGET_COUNT = 8;
 const targets = [];
-const targetPositions = [];
 
 for (let i = 0; i < TARGET_COUNT; i++) {
-  let x = 0, z = 0, ok = false, tries = 0;
-  while (!ok && tries < 200) {
-    const a = Math.random() * Math.PI * 2;
-    const r = 24 + Math.random() * 115;
-    x = Math.cos(a) * r;
-    z = Math.sin(a) * r;
-    ok = true;
-    for (const p of targetPositions) {
-      if (Math.hypot(x - p.x, z - p.z) < 32) { ok = false; break; }
-    }
-    if (Math.hypot(x, z) < 22) ok = false;
-    tries++;
-  }
-  targetPositions.push({ x, z });
-}
+  const a = (i / TARGET_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+  const r = 55 + Math.random() * 70;
+  const x = Math.cos(a) * r;
+  const z = Math.sin(a) * r;
 
-const UP = new THREE.Vector3(0, 1, 0);
-
-for (const p of targetPositions) {
   const grp = new THREE.Group();
-  grp.position.set(p.x, 0, p.z);
+  grp.position.set(x, 0, z);
 
-  const mOuter = new THREE.MeshBasicMaterial({ color:0x00ddff, transparent:true, opacity:0.9, side:THREE.DoubleSide });
-  const mMid   = new THREE.MeshBasicMaterial({ color:0xffee44, transparent:true, opacity:0.9, side:THREE.DoubleSide });
-  const mInner = new THREE.MeshBasicMaterial({ color:0xff3366, transparent:true, opacity:0.95, side:THREE.DoubleSide });
+  // Boden-Ringe
+  const matOuter = new THREE.MeshBasicMaterial({ color:0x00ddff, transparent:true, opacity:0.95, side:THREE.DoubleSide });
+  const matMid   = new THREE.MeshBasicMaterial({ color:0xffee44, transparent:true, opacity:0.95, side:THREE.DoubleSide });
+  const matInner = new THREE.MeshBasicMaterial({ color:0xff3366, transparent:true, opacity:1.0,  side:THREE.DoubleSide });
 
-  const outer = new THREE.Mesh(new THREE.RingGeometry(2.9, 3.5, 44), mOuter);
-  outer.rotation.x = -Math.PI/2; outer.position.y = 0.06;
-  const mid = new THREE.Mesh(new THREE.RingGeometry(1.9, 2.5, 40), mMid);
-  mid.rotation.x = -Math.PI/2; mid.position.y = 0.07;
-  const inner = new THREE.Mesh(new THREE.CircleGeometry(1.3, 32), mInner);
-  inner.rotation.x = -Math.PI/2; inner.position.y = 0.08;
+  const ringOuter = new THREE.Mesh(new THREE.RingGeometry(3.0, 3.7, 44), matOuter);
+  ringOuter.rotation.x = -Math.PI/2; ringOuter.position.y = 0.06;
 
-  grp.add(outer, mid, inner);
+  const ringMid = new THREE.Mesh(new THREE.RingGeometry(2.0, 2.7, 40), matMid);
+  ringMid.rotation.x = -Math.PI/2; ringMid.position.y = 0.07;
 
-  // schwebende Markierung
-  const markerMat = new THREE.MeshBasicMaterial({ color:0x00ffcc, transparent:true, opacity:0.8 });
-  const marker = new THREE.Mesh(new THREE.OctahedronGeometry(0.75), markerMat);
-  marker.position.y = 9;
+  const circleInner = new THREE.Mesh(new THREE.CircleGeometry(1.5, 32), matInner);
+  circleInner.rotation.x = -Math.PI/2; circleInner.position.y = 0.08;
+
+  grp.add(ringOuter, ringMid, circleInner);
+
+  // Vertikale Lichtsäule (super sichtbar aus der Ferne)
+  const beamMat = new THREE.MeshBasicMaterial({
+    color: 0x00ffcc, transparent:true, opacity:0.32,
+    depthWrite:false, side:THREE.DoubleSide
+  });
+  const beam = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.55, 0.55, 90, 12, 1, true),
+    beamMat
+  );
+  beam.position.y = 45;
+  grp.add(beam);
+
+  // Schwebender Marker
+  const markerMat = new THREE.MeshBasicMaterial({ color:0x00ffcc, transparent:true, opacity:0.9 });
+  const marker = new THREE.Mesh(new THREE.OctahedronGeometry(0.9), markerMat);
+  marker.position.y = 12;
   grp.add(marker);
 
   scene.add(grp);
 
   targets.push({
-    pos: new THREE.Vector3(p.x, 0, p.z),
-    group: grp, marker,
-    mats: [mOuter, mMid, mInner],
+    pos: new THREE.Vector3(x, 0, z),
+    group: grp, beam, marker,
+    mats: [matOuter, matMid, matInner],
+    beamMat, markerMat,
     hit: false
   });
 }
 
-/* ═══════════════════════════ GEBÄUDE ═══════════════════════════ */
+/* ═══════════════════════════ GEBÄUDE (Grid-basiert) ═══════════════════════════ */
 
 const buildings = [];
 const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-const palette = [0x6b7280, 0x7a6a5a, 0x556070, 0x807464, 0x4e5866, 0x8a7f70];
+const palette = [0x6b7280, 0x7a6a5a, 0x556070, 0x807464, 0x4e5866, 0x8a7f70, 0x5a6b7a, 0x74685c];
 
-for (let i = 0; i < 110; i++) {
-  const a = Math.random() * Math.PI * 2;
-  const r = 26 + Math.random() * 170;
-  const x = Math.cos(a) * r;
-  const z = Math.sin(a) * r;
+const GRID = 11;
+const CELL = 38;
 
-  let ok = true;
-  if (Math.hypot(x, z) < 24) ok = false;
-  if (ok) for (const t of targets) {
-    if (Math.hypot(x - t.pos.x, z - t.pos.z) < 20) { ok = false; break; }
+for (let gx = 0; gx < GRID; gx++) {
+  for (let gz = 0; gz < GRID; gz++) {
+    const cx = (gx - (GRID-1)/2) * CELL;
+    const cz = (gz - (GRID-1)/2) * CELL;
+
+    // Spawn/Reload-Bereich freihalten
+    if (Math.hypot(cx, cz) < 32) continue;
+
+    // Ziele freihalten
+    let tooClose = false;
+    for (const t of targets) {
+      if (Math.hypot(cx - t.pos.x, cz - t.pos.z) < 22) { tooClose = true; break; }
+    }
+    if (tooClose) continue;
+
+    // Zufällig aussetzen für mehr Offenheit
+    if (Math.random() < 0.28) continue;
+
+    const x = cx + (Math.random() - 0.5) * CELL * 0.45;
+    const z = cz + (Math.random() - 0.5) * CELL * 0.45;
+
+    const w = 7 + Math.random() * 17;
+    const h = 7 + Math.random() * 46;
+    const d = 7 + Math.random() * 17;
+
+    const m = new THREE.Mesh(boxGeo, new THREE.MeshStandardMaterial({
+      color: palette[(Math.random() * palette.length) | 0],
+      roughness: 0.85, metalness: 0.1
+    }));
+    m.scale.set(w, h, d);
+    m.position.set(x, h / 2, z);
+    scene.add(m);
+
+    // Antennen-Spitzen auf manchen Türmen
+    if (h > 30 && Math.random() < 0.5) {
+      const antMat = new THREE.MeshStandardMaterial({ color:0x222228, roughness:0.6 });
+      const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 6, 6), antMat);
+      ant.position.set(x, h + 3, z);
+      scene.add(ant);
+    }
+
+    buildings.push({
+      minX: x - w/2 - 0.7, maxX: x + w/2 + 0.7,
+      minY: -1,            maxY: h + 0.7,
+      minZ: z - d/2 - 0.7, maxZ: z + d/2 + 0.7
+    });
   }
-  if (!ok) continue;
-
-  const w = 6 + Math.random() * 14;
-  const h = 7 + Math.random() * 44;
-  const d = 6 + Math.random() * 14;
-
-  const m = new THREE.Mesh(boxGeo, new THREE.MeshStandardMaterial({
-    color: palette[(Math.random() * palette.length) | 0],
-    roughness: 0.85, metalness: 0.08
-  }));
-  m.scale.set(w, h, d);
-  m.position.set(x, h / 2, z);
-  scene.add(m);
-
-  buildings.push({
-    minX: x - w/2, maxX: x + w/2,
-    minY: 0,       maxY: h,
-    minZ: z - d/2, maxZ: z + d/2
-  });
 }
 
 /* ═══════════════════════════ RELOAD PAD ═══════════════════════════ */
 
-const PAD_RADIUS = 11;
+const PAD_RADIUS = 12;
 
 const padDisc = new THREE.Mesh(
-  new THREE.CircleGeometry(PAD_RADIUS, 48),
-  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.14, side:THREE.DoubleSide })
+  new THREE.CircleGeometry(PAD_RADIUS, 56),
+  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.15, side:THREE.DoubleSide })
 );
 padDisc.rotation.x = -Math.PI/2; padDisc.position.y = 0.09;
 scene.add(padDisc);
 
 const padRing = new THREE.Mesh(
-  new THREE.RingGeometry(PAD_RADIUS - 0.9, PAD_RADIUS, 56),
-  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.65, side:THREE.DoubleSide })
+  new THREE.RingGeometry(PAD_RADIUS - 1.0, PAD_RADIUS, 64),
+  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.75, side:THREE.DoubleSide })
 );
 padRing.rotation.x = -Math.PI/2; padRing.position.y = 0.11;
 scene.add(padRing);
+
+const padRing2 = new THREE.Mesh(
+  new THREE.RingGeometry(PAD_RADIUS * 0.5, PAD_RADIUS * 0.5 + 0.6, 48),
+  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.4, side:THREE.DoubleSide })
+);
+padRing2.rotation.x = -Math.PI/2; padRing2.position.y = 0.11;
+scene.add(padRing2);
 
 /* ═══════════════════════════ DROHNE ═══════════════════════════ */
 
@@ -380,12 +419,11 @@ const droneQuat = new THREE.Quaternion();
 let throttle = 0.40;
 
 const MAX_AMMO = 15;
-const BOMB_COOLDOWN = 0.38;
+const BOMB_COOLDOWN = 0.4;
 let ammo = MAX_AMMO;
 let dropCooldown = 0;
 
-let state = 'idle';           // idle | flying | finished
-let raceTime = 0;
+let state = 'idle';
 let timeLeft = 90;
 let score = 0;
 let targetsHit = 0;
@@ -396,38 +434,39 @@ let bestScore = parseInt(localStorage.getItem('fpv_striker_best') || '0', 10);
 const bombs = [];
 const explosions = [];
 
-const BOMB_GEO = new THREE.SphereGeometry(0.28, 9, 7);
-BOMB_GEO.scale(1, 1.85, 1);
+const BOMB_GEO = new THREE.SphereGeometry(0.3, 10, 8);
+BOMB_GEO.scale(1, 1.9, 1);
 const BOMB_MAT = new THREE.MeshStandardMaterial({
-  color: 0x2e2e34, emissive: 0xff5522, emissiveIntensity: 0.7,
-  roughness: 0.4, metalness: 0.75
+  color: 0x2e2e34, emissive: 0xff5522, emissiveIntensity: 0.8,
+  roughness: 0.4, metalness: 0.8
 });
 
-const EXPLO_GEO = new THREE.SphereGeometry(1, 14, 10);
-const RING_GEO  = new THREE.RingGeometry(0.85, 1.25, 36);
+const EXPLO_GEO = new THREE.SphereGeometry(1, 16, 12);
+const RING_GEO  = new THREE.RingGeometry(0.9, 1.4, 40);
 
 /* ═══════════════════════════ IMPACT-MARKER ═══════════════════════════ */
 
 const impactMat = new THREE.MeshBasicMaterial({
-  color:0xff3366, transparent:true, opacity:0.85, side:THREE.DoubleSide
+  color:0xff3366, transparent:true, opacity:0.85, side:THREE.DoubleSide, depthWrite:false
 });
-const impactMarker = new THREE.Mesh(new THREE.RingGeometry(1.0, 1.45, 40), impactMat);
+const impactMarker = new THREE.Mesh(new THREE.RingGeometry(1.1, 1.6, 44), impactMat);
 impactMarker.rotation.x = -Math.PI/2;
-impactMarker.position.y = 0.15;
+impactMarker.position.y = 0.2;
 impactMarker.visible = false;
 scene.add(impactMarker);
 
-/* ═══════════════════════════ START ═══════════════════════════ */
+/* ═══════════════════════════ START-POSITION ═══════════════════════════ */
 
-const _m4 = new THREE.Matrix4();
-const _tgt = new THREE.Vector3();
+const _lookDummy = new THREE.Object3D();
 
 function placeAtStart() {
-  dronePos.set(0, 30, 95);
+  // Über dem Zentrum, leicht nach +Z geneigt
+  dronePos.set(0, 55, 0);
   droneVel.set(0, 0, 0);
-  _tgt.set(0, 6, 0);
-  _m4.lookAt(dronePos, _tgt, UP);
-  droneQuat.setFromRotationMatrix(_m4);
+
+  _lookDummy.position.copy(dronePos);
+  _lookDummy.lookAt(0, 10, 60);
+  droneQuat.copy(_lookDummy.quaternion);
 }
 placeAtStart();
 
@@ -599,7 +638,7 @@ if (isTouch) {
     if (state === 'idle' || state === 'finished') { startRace(); return; }
     tryDrop();
   });
-  const rel = e => { dropBtnEl.classList.remove('active'); };
+  const rel = () => dropBtnEl.classList.remove('active');
   dropBtnEl.addEventListener('pointerup', rel);
   dropBtnEl.addEventListener('pointercancel', rel);
   dropBtnEl.addEventListener('pointerleave', rel);
@@ -689,10 +728,12 @@ function startRace() {
     t.mats[1].color.set(0xffee44);
     t.mats[2].color.set(0xff3366);
     t.marker.visible = true;
-    t.marker.material.color.set(0x00ffcc);
+    t.beam.visible = true;
+    t.markerMat.color.set(0x00ffcc);
+    t.beamMat.color.set(0x00ffcc);
+    t.beamMat.opacity = 0.32;
   });
 
-  // Bomben aufräumen
   for (const b of bombs) scene.remove(b.mesh);
   bombs.length = 0;
 
@@ -701,11 +742,10 @@ function startRace() {
   showMsg('GO!', '#0f8', 800);
 }
 
-function finishRace(reason) {
+function finishRace() {
   if (state !== 'flying') return;
   state = 'finished';
 
-  // Zeitbonus
   let bonus = 0;
   if (targetsHit >= TARGET_COUNT) {
     bonus = Math.floor(timeLeft) * 10;
@@ -779,7 +819,7 @@ function spawnExplosion(pos) {
   const ring = new THREE.Mesh(RING_GEO, rMat);
   ring.rotation.x = -Math.PI/2;
   ring.position.copy(pos);
-  ring.position.y = 0.25;
+  ring.position.y = 0.3;
   scene.add(ring);
 
   explosions.push({ sph, ring, life:0, dur:0.55 });
@@ -792,25 +832,25 @@ function checkHits(pos) {
   for (const t of targets) {
     if (t.hit) continue;
     const d = Math.hypot(pos.x - t.pos.x, pos.z - t.pos.z);
-    if (d < 4.0) {
+    if (d < 4.2) {
       t.hit = true;
       targetsHit++;
 
-      let pts = d < 1.5 ? 100 : d < 2.8 ? 60 : 30;
+      let pts = d < 1.6 ? 100 : d < 2.9 ? 60 : 30;
       score += pts;
 
       t.mats[0].color.set(0x22ff44);
       t.mats[1].color.set(0x22ff44);
       t.mats[2].color.set(0x22ff44);
       t.marker.visible = false;
+      t.beamMat.color.set(0x22ff44);
+      t.beamMat.opacity = 0.15;
 
       if (pts >= 100) { showMsg('BULLSEYE! +100', '#ff0', 900); beep(1600, 0.12, 'square', 0.09); }
       else if (pts >= 60) { showMsg('TREFFER! +60', '#0f8', 800); beep(1200, 0.10, 'square', 0.08); }
       else { showMsg('TREFFER +30', '#0fc', 700); beep(900, 0.09, 'square', 0.07); }
 
-      if (targetsHit >= TARGET_COUNT) {
-        setTimeout(() => finishRace('all'), 350);
-      }
+      if (targetsHit >= TARGET_COUNT) setTimeout(finishRace, 350);
       return;
     }
   }
@@ -824,8 +864,8 @@ const _v = new THREE.Vector3();
 function computeImpact() {
   _p.copy(dronePos);
   _v.copy(droneVel);
-  const step = 1/60;
-  for (let i = 0; i < 500; i++) {
+  const step = 1/50;
+  for (let i = 0; i < 260; i++) {
     _v.y -= GRAVITY * step;
     _v.multiplyScalar(1 / (1 + BOMB_DRAG * step));
     _p.addScaledVector(_v, step);
@@ -843,10 +883,9 @@ const tmpE = new THREE.Euler();
 function update(dt) {
   const flying = (state === 'flying');
 
-  /* ═══ Timer ═══ */
   if (flying) {
     timeLeft -= dt;
-    if (timeLeft <= 0) { timeLeft = 0; finishRace('time'); }
+    if (timeLeft <= 0) { timeLeft = 0; finishRace(); }
   }
 
   dropCooldown = Math.max(0, dropCooldown - dt);
@@ -861,7 +900,6 @@ function update(dt) {
 
   pollGamepad();
 
-  // Gamepad-Abwurf (Flankenerkennung)
   if (padState.drop && !prevDropBtn && flying) tryDrop();
   prevDropBtn = padState.drop;
 
@@ -905,7 +943,7 @@ function update(dt) {
     throttle = clamp(throttle + kbThr * THR_RATE * dt, 0, 1);
   }
 
-  /* ═══ PHYSIK DROHNE ═══ */
+  /* ═══ PHYSIK ═══ */
 
   if (flying) {
     const up = tmpV.set(0, 1, 0).applyQuaternion(droneQuat);
@@ -915,44 +953,53 @@ function update(dt) {
     dronePos.addScaledVector(droneVel, dt);
   }
 
-  /* ═══ KOLLISIONEN (nur sanft, kein Crash) ═══ */
+  /* ═══ KOLLISIONEN ═══ */
 
   if (flying) {
-    if (dronePos.y < 1.2) {
-      dronePos.y = 1.2;
-      if (droneVel.y < 0) droneVel.y *= -0.15;
+    // Boden
+    if (dronePos.y < 1.4) {
+      dronePos.y = 1.4;
+      if (droneVel.y < 0) droneVel.y = -droneVel.y * 0.18;
+      droneVel.x *= 0.92;
+      droneVel.z *= 0.92;
     }
 
+    // Gebäude – sanft herausschieben (Achse mit kleinster Überschneidung)
     for (const b of buildings) {
-      if (dronePos.x > b.minX - 0.6 && dronePos.x < b.maxX + 0.6 &&
-          dronePos.y > b.minY - 0.6 && dronePos.y < b.maxY + 0.6 &&
-          dronePos.z > b.minZ - 0.6 && dronePos.z < b.maxZ + 0.6) {
-        // rausschieben (einfachste Achse)
-        const dxMin = Math.abs(dronePos.x - (b.minX - 0.6));
-        const dxMax = Math.abs((b.maxX + 0.6) - dronePos.x);
-        const dzMin = Math.abs(dronePos.z - (b.minZ - 0.6));
-        const dzMax = Math.abs((b.maxZ + 0.6) - dronePos.z);
-        const dyTop = Math.abs((b.maxY + 0.6) - dronePos.y);
-        const m = Math.min(dxMin, dxMax, dzMin, dzMax, dyTop);
+      if (dronePos.x > b.minX && dronePos.x < b.maxX &&
+          dronePos.y > b.minY && dronePos.y < b.maxY &&
+          dronePos.z > b.minZ && dronePos.z < b.maxZ) {
 
-        if (m === dyTop) { dronePos.y = b.maxY + 0.7; if (droneVel.y < 0) droneVel.y = 0; }
-        else if (m === dxMin) { dronePos.x = b.minX - 0.7; droneVel.x = 0; }
-        else if (m === dxMax) { dronePos.x = b.maxX + 0.7; droneVel.x = 0; }
-        else if (m === dzMin) { dronePos.z = b.minZ - 0.7; droneVel.z = 0; }
-        else { dronePos.z = b.maxZ + 0.7; droneVel.z = 0; }
+        const dxMin = dronePos.x - b.minX;
+        const dxMax = b.maxX - dronePos.x;
+        const dzMin = dronePos.z - b.minZ;
+        const dzMax = b.maxZ - dronePos.z;
+        const dyMin = dronePos.y - b.minY;
+        const dyMax = b.maxY - dronePos.y;
+        const m = Math.min(dxMin, dxMax, dzMin, dzMax, dyMin, dyMax);
+
+        if      (m === dyMax) { dronePos.y = b.maxY + 0.1; if (droneVel.y < 0) droneVel.y = 0; }
+        else if (m === dyMin) { dronePos.y = b.minY - 0.1; if (droneVel.y > 0) droneVel.y = 0; }
+        else if (m === dxMin) { dronePos.x = b.minX - 0.1; droneVel.x = Math.min(0, droneVel.x); }
+        else if (m === dxMax) { dronePos.x = b.maxX + 0.1; droneVel.x = Math.max(0, droneVel.x); }
+        else if (m === dzMin) { dronePos.z = b.minZ - 0.1; droneVel.z = Math.min(0, droneVel.z); }
+        else                  { dronePos.z = b.maxZ + 0.1; droneVel.z = Math.max(0, droneVel.z); }
       }
     }
 
-    // Weltgrenze
+    // Weltgrenze (weich, kein Crash)
     const distC = Math.hypot(dronePos.x, dronePos.z);
-    if (distC > 400) {
-      dronePos.x *= 400 / distC;
-      dronePos.z *= 400 / distC;
-      droneVel.x *= -0.2; droneVel.z *= -0.2;
+    const HARD_LIMIT = 480;
+    if (distC > HARD_LIMIT) {
+      const k = HARD_LIMIT / distC;
+      dronePos.x *= k;
+      dronePos.z *= k;
+      droneVel.x *= -0.3;
+      droneVel.z *= -0.3;
     }
 
     /* ═══ RELOAD PAD ═══ */
-    if (distC < PAD_RADIUS && dronePos.y < 26 && ammo < MAX_AMMO) {
+    if (distC < PAD_RADIUS && dronePos.y < 24 && ammo < MAX_AMMO) {
       ammo = MAX_AMMO;
       beep(1400, 0.09, 'sine', 0.06);
       beep(1900, 0.09, 'sine', 0.05);
@@ -973,11 +1020,11 @@ function update(dt) {
     const spd = b.vel.length();
     if (spd > 0.15) {
       tmpV.copy(b.vel).divideScalar(spd);
-      b.mesh.quaternion.setFromUnitVectors(UP, tmpV);
+      b.mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), tmpV);
     }
 
-    if (b.mesh.position.y <= 0.25) {
-      b.mesh.position.y = 0.25;
+    if (b.mesh.position.y <= 0.3) {
+      b.mesh.position.y = 0.3;
       spawnExplosion(b.mesh.position.clone());
       checkHits(b.mesh.position);
       scene.remove(b.mesh);
@@ -985,7 +1032,7 @@ function update(dt) {
       continue;
     }
 
-    if (b.age > 20 || b.mesh.position.lengthSq() > 700 * 700) {
+    if (b.age > 25 || b.mesh.position.lengthSq() > 900 * 900) {
       scene.remove(b.mesh);
       bombs.splice(i, 1);
     }
@@ -1006,21 +1053,24 @@ function update(dt) {
       continue;
     }
 
-    e.sph.scale.setScalar(0.6 + t * 7.5);
+    e.sph.scale.setScalar(0.6 + t * 8);
     e.sph.material.opacity = 0.95 * (1 - t);
 
-    e.ring.scale.setScalar(1 + t * 10);
+    e.ring.scale.setScalar(1 + t * 11);
     e.ring.material.opacity = 0.9 * (1 - t);
   }
 
-  /* ═══ ZIEL-MARKER ROTIEREN ═══ */
+  /* ═══ ZIEL-ANIMATION ═══ */
 
   const now = performance.now() * 0.001;
   for (const t of targets) {
     if (!t.hit) {
-      t.marker.rotation.y = now * 1.6;
-      t.marker.position.y = 9 + Math.sin(now * 2 + t.pos.x) * 0.8;
-      t.marker.material.opacity = 0.6 + Math.sin(now * 3) * 0.25;
+      t.marker.rotation.y = now * 1.8;
+      t.marker.position.y = 12 + Math.sin(now * 2 + t.pos.x * 0.1) * 1.2;
+      t.markerMat.opacity = 0.7 + Math.sin(now * 3.5) * 0.25;
+
+      t.beamMat.opacity = 0.25 + Math.sin(now * 2 + t.pos.z * 0.1) * 0.12;
+      t.mats[0].opacity = 0.8 + Math.sin(now * 3) * 0.15;
     }
   }
 
@@ -1028,9 +1078,9 @@ function update(dt) {
 
   if (flying) {
     const ip = computeImpact();
-    if (ip && Math.hypot(ip.x - dronePos.x, ip.z - dronePos.z) < 250) {
+    if (ip && Math.hypot(ip.x - dronePos.x, ip.z - dronePos.z) < 260) {
       impactMarker.visible = true;
-      impactMarker.position.set(ip.x, 0.15, ip.z);
+      impactMarker.position.set(ip.x, 0.2, ip.z);
       const s = 1 + Math.sin(now * 8) * 0.12;
       impactMarker.scale.setScalar(s);
       impactMat.opacity = 0.55 + Math.sin(now * 8) * 0.25;
@@ -1093,8 +1143,14 @@ function animate(now) {
   let dt = (now - last) / 1000;
   last = now;
   if (dt > 0.05) dt = 0.05;
-  update(dt);
-  renderer.render(scene, camera);
+  try { update(dt); } catch (err) {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Update-Fehler: ' + err.message + '\n' + (err.stack || '');
+  }
+  try { renderer.render(scene, camera); } catch (err) {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Render-Fehler: ' + err.message;
+  }
 }
 requestAnimationFrame(animate);
 
@@ -1106,7 +1162,6 @@ addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-/* Mobile: Scroll/Zoom verhindern */
 document.addEventListener('touchmove', e => {
   if (e.target.closest('#touchControls') || e.target.closest('#overlay')) e.preventDefault();
 }, { passive:false });

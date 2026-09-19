@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<title>FPV Drone Striker</title>
+<title>FPV Impact — Arcade Drone Arena</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{width:100%;height:100%;overflow:hidden;background:#000;
@@ -25,7 +24,6 @@
 
   .label{opacity:.6;font-size:11px}
   .val{font-size:20px;font-weight:bold;color:#7fffd4}
-  .ammo-low{color:#f66 !important;text-shadow:0 0 10px #f44}
 
   #cross{position:absolute;left:50%;top:50%;width:120px;height:120px;
     transform:translate(-50%,-50%);opacity:.85}
@@ -103,20 +101,19 @@
   #zoneLeft .stick-label{left:40%}
   #zoneRight .stick-label{left:60%}
 
-  #dropBtn{position:absolute;
-    right:calc(7vmin + env(safe-area-inset-right,0));
+  #boostBtn{position:absolute;
+    left:calc(7vmin + env(safe-area-inset-left,0));
     bottom:calc(44vmin + env(safe-area-inset-bottom,0));
     width:min(17vmin,84px);height:min(17vmin,84px);border-radius:50%;
-    border:2px solid rgba(255,90,90,.7);
-    background:radial-gradient(circle,rgba(255,70,70,.42),rgba(70,0,0,.6));
-    box-shadow:0 0 26px rgba(255,70,70,.45), inset 0 0 22px rgba(255,70,70,.25);
-    color:#faa;font-size:max(10px,2vmin);letter-spacing:2px;
+    border:2px solid rgba(255,180,60,.65);
+    background:radial-gradient(circle,rgba(255,160,40,.35),rgba(70,40,0,.55));
+    box-shadow:0 0 26px rgba(255,180,60,.4), inset 0 0 22px rgba(255,180,60,.25);
+    color:#ffd;font-size:max(10px,2vmin);letter-spacing:2px;
     display:flex;align-items:center;justify-content:center;
     pointer-events:auto;touch-action:none;font-family:inherit;
     transition:transform .08s, box-shadow .1s, border-color .1s}
-  #dropBtn.active{border-color:#f66;transform:scale(.92);
-    box-shadow:0 0 46px rgba(255,70,70,.9), inset 0 0 26px rgba(255,70,70,.4)}
-  #dropBtn.cool{opacity:.35}
+  #boostBtn.active{border-color:#fc6;transform:scale(.92);
+    box-shadow:0 0 46px rgba(255,180,60,.9), inset 0 0 26px rgba(255,180,60,.4)}
 
   #err{position:fixed;inset:auto 10px 10px 10px;padding:10px;background:#300;
     color:#f88;font-size:12px;border:1px solid #f44;border-radius:4px;display:none;
@@ -141,17 +138,17 @@
 
 <div id="hud">
   <div id="topleft" class="panel">
-    <div class="label">ZIELE</div>
-    <div class="val" id="hTargets">0 / 8</div>
-    <div class="label" style="margin-top:6px">MUNITION</div>
-    <div class="val" id="hAmmo">15</div>
+    <div class="label">ORBS</div>
+    <div class="val" id="hTargets">0 / 10</div>
+    <div class="label" style="margin-top:6px">VERSuche</div>
+    <div class="val" id="hLives">∞</div>
   </div>
 
   <div id="topright" class="panel">
     <div class="label">PUNKTE</div>
     <div class="val" id="hScore">0</div>
     <div class="label" style="margin-top:6px">ZEIT</div>
-    <div class="val" id="hTime">01:30</div>
+    <div class="val" id="hTime">02:00</div>
   </div>
 
   <div id="botleft" class="panel">
@@ -186,27 +183,27 @@
     <div class="stick-base" id="baseRight"><div class="stick-knob" id="knobRight"></div></div>
     <div class="stick-label">PITCH · ROLL</div>
   </div>
-  <button id="dropBtn">DROP</button>
+  <button id="boostBtn">BOOST</button>
 </div>
 
 <div id="flash"></div>
 <div id="bigMsg"></div>
 
 <div id="overlay">
-  <h1>FPV DRONE STRIKER</h1>
-  <p>Zerstöre alle <b>8 Bodenzielscheiben</b> in <b>90 Sekunden</b>.<br>
-     Triff die <span style="color:#ff3366">Mitte</span> für maximale Punkte.</p>
+  <h1>FPV IMPACT</h1>
+  <p>Ramm alle <b>10 Energie-Orbs</b> in <b>120 Sekunden</b>.<br>
+     Die Drohne explodiert beim Aufprall und startet neu — kein Absturz, nur Impact.</p>
   <p style="margin-top:14px">
     <kbd>W</kbd><kbd>S</kbd> Nicken · <kbd>A</kbd><kbd>D</kbd> Rollen ·
     <kbd>Q</kbd><kbd>E</kbd>/<kbd>←</kbd><kbd>→</kbd> Gieren ·
-    <kbd>↑</kbd><kbd>↓</kbd> Gas · <kbd>SPACE</kbd> Abwerfen
+    <kbd>↑</kbd><kbd>↓</kbd> Gas · <kbd>SHIFT</kbd> Boost
   </p>
   <p style="margin-top:10px;color:#7fffd4">
-    🎮 <b>Gamepad:</b> L-Stick Gas/Gieren · R-Stick Nicken/Rollen · <b>A / RT</b> = Abwerfen<br>
-    📱 <b>Touch:</b> zwei virtuelle Sticks + roter DROP-Button
+    🎮 <b>Gamepad:</b> L-Stick Gas/Gieren · R-Stick Nicken/Rollen · <b>RT/LT</b> = Boost<br>
+    📱 <b>Touch:</b> zwei virtuelle Sticks + gelber BOOST-Button
   </p>
-  <p class="small" style="margin-top:14px">Die grünen Lichtsäulen zeigen dir die Ziele.<br>
-    Der grüne Ring in der Mitte lädt Munition auf.</p>
+  <p class="small" style="margin-top:14px">Die Lichtsäulen markieren die Orbs.<br>
+    Boden und Pfeiler sind hart — Aufprall = Respawn.</p>
   <div id="startHint">— TIPPEN / TASTE / STICK ZUM STARTEN —</div>
 </div>
 
@@ -235,238 +232,252 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-const SKY = 0x9fd0ff;
+const SKY = 0x0a1226;
 scene.background = new THREE.Color(SKY);
-scene.fog = new THREE.Fog(SKY, 180, 620);
+scene.fog = new THREE.Fog(SKY, 120, 480);
 
 const camera = new THREE.PerspectiveCamera(105, innerWidth/innerHeight, 0.15, 1200);
 
-scene.add(new THREE.HemisphereLight(0xffffff, 0x445544, 1.2));
-const sun = new THREE.DirectionalLight(0xfff3d0, 1.9);
-sun.position.set(120, 200, 80);
+scene.add(new THREE.HemisphereLight(0x6688ff, 0x0a0f1a, 1.0));
+const sun = new THREE.DirectionalLight(0xffd0a0, 1.6);
+sun.position.set(100, 180, 70);
 scene.add(sun);
+
+const ambient = new THREE.AmbientLight(0x334466, 0.6);
+scene.add(ambient);
 
 const ground = new THREE.Mesh(
   new THREE.PlaneGeometry(4000, 4000),
-  new THREE.MeshStandardMaterial({ color:0x3d6b39, roughness:1, metalness:0 })
+  new THREE.MeshStandardMaterial({ color:0x0d1a2e, roughness:0.95, metalness:0.15 })
 );
 ground.rotation.x = -Math.PI/2;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(1000, 100, 0x2c5230, 0x335a37);
+const grid = new THREE.GridHelper(1200, 60, 0x1e3a5f, 0x142840);
 grid.position.y = 0.04;
-grid.material.opacity = 0.6;
+grid.material.opacity = 0.7;
 grid.material.transparent = true;
 scene.add(grid);
 
-/* ═══════════════════════════ ZIELE ═══════════════════════════ */
+// Arena-Ring (Spielgrenze)
+const ARENA_R = 220;
+const arenaRing = new THREE.Mesh(
+  new THREE.RingGeometry(ARENA_R - 1.5, ARENA_R, 96),
+  new THREE.MeshBasicMaterial({ color:0x00ffff, transparent:true, opacity:0.55, side:THREE.DoubleSide })
+);
+arenaRing.rotation.x = -Math.PI/2;
+arenaRing.position.y = 0.15;
+scene.add(arenaRing);
 
-const TARGET_COUNT = 8;
-const targets = [];
+/* ═══════════════════════════ SÄULEN (Hindernisse) ═══════════════════════════ */
 
-for (let i = 0; i < TARGET_COUNT; i++) {
-  const a = (i / TARGET_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-  const r = 55 + Math.random() * 70;
+const pillars = [];
+const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+
+for (let i = 0; i < 40; i++) {
+  const a = Math.random() * Math.PI * 2;
+  const r = 40 + Math.random() * 150;
   const x = Math.cos(a) * r;
   const z = Math.sin(a) * r;
 
-  const grp = new THREE.Group();
-  grp.position.set(x, 0, z);
+  const w = 3 + Math.random() * 6;
+  const h = 20 + Math.random() * 60;
+  const d = 3 + Math.random() * 6;
 
-  // Boden-Ringe
-  const matOuter = new THREE.MeshBasicMaterial({ color:0x00ddff, transparent:true, opacity:0.95, side:THREE.DoubleSide });
-  const matMid   = new THREE.MeshBasicMaterial({ color:0xffee44, transparent:true, opacity:0.95, side:THREE.DoubleSide });
-  const matInner = new THREE.MeshBasicMaterial({ color:0xff3366, transparent:true, opacity:1.0,  side:THREE.DoubleSide });
+  const hue = 0.55 + Math.random() * 0.1;
+  const col = new THREE.Color().setHSL(hue, 0.5, 0.35);
+  const m = new THREE.Mesh(boxGeo, new THREE.MeshStandardMaterial({
+    color: col, emissive: col.clone().multiplyScalar(0.2),
+    roughness: 0.6, metalness: 0.4
+  }));
+  m.scale.set(w, h, d);
+  m.position.set(x, h/2, z);
+  scene.add(m);
 
-  const ringOuter = new THREE.Mesh(new THREE.RingGeometry(3.0, 3.7, 44), matOuter);
-  ringOuter.rotation.x = -Math.PI/2; ringOuter.position.y = 0.06;
+  // Glowing edge top
+  const topGlow = new THREE.Mesh(
+    new THREE.BoxGeometry(w + 0.2, 0.4, d + 0.2),
+    new THREE.MeshBasicMaterial({ color:0x00ffff, transparent:true, opacity:0.7 })
+  );
+  topGlow.position.set(x, h + 0.2, z);
+  scene.add(topGlow);
 
-  const ringMid = new THREE.Mesh(new THREE.RingGeometry(2.0, 2.7, 40), matMid);
-  ringMid.rotation.x = -Math.PI/2; ringMid.position.y = 0.07;
+  pillars.push({
+    minX: x - w/2 - 0.6, maxX: x + w/2 + 0.6,
+    minY: -1,            maxY: h + 0.6,
+    minZ: z - d/2 - 0.6, maxZ: z + d/2 + 0.6
+  });
+}
 
-  const circleInner = new THREE.Mesh(new THREE.CircleGeometry(1.5, 32), matInner);
-  circleInner.rotation.x = -Math.PI/2; circleInner.position.y = 0.08;
+/* ═══════════════════════════ ZIELE (Energie-Orbs) ═══════════════════════════ */
 
-  grp.add(ringOuter, ringMid, circleInner);
+const TARGET_COUNT = 10;
+const targets = [];
 
-  // Vertikale Lichtsäule (super sichtbar aus der Ferne)
+for (let i = 0; i < TARGET_COUNT; i++) {
+  let x = 0, y = 0, z = 0, ok = false, tries = 0;
+  while (!ok && tries < 300) {
+    const a = (i / TARGET_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.7;
+    const r = 45 + Math.random() * 120;
+    x = Math.cos(a) * r;
+    z = Math.sin(a) * r;
+    y = 8 + Math.random() * 30;
+    ok = true;
+    // Nicht zu nah an anderen Orbs
+    for (const t of targets) {
+      if (t.pos.distanceTo(new THREE.Vector3(x, y, z)) < 26) { ok = false; break; }
+    }
+    // Nicht in Säulen
+    for (const p of pillars) {
+      if (x > p.minX - 3 && x < p.maxX + 3 && z > p.minZ - 3 && z < p.maxZ + 3) {
+        ok = false; break;
+      }
+    }
+    if (Math.hypot(x, z) < 30) ok = false;
+    tries++;
+  }
+
+  const hue = (i / TARGET_COUNT) * 0.7;
+
+  // Kern
+  const coreCol = new THREE.Color().setHSL(hue, 1.0, 0.6);
+  const coreMat = new THREE.MeshStandardMaterial({
+    color: coreCol, emissive: coreCol,
+    emissiveIntensity: 1.4, roughness: 0.25, metalness: 0.7
+  });
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.8, 1), coreMat);
+  core.position.set(x, y, z);
+  scene.add(core);
+
+  // Äußerer Ring (rotiert)
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: coreCol, transparent:true, opacity:0.85
+  });
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(3.3, 0.16, 8, 44), ringMat);
+  ring.position.set(x, y, z);
+  scene.add(ring);
+
+  // Zweiter Ring, andere Achse
+  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(4.0, 0.10, 8, 44), ringMat.clone());
+  ring2.material.opacity = 0.5;
+  ring2.position.set(x, y, z);
+  ring2.rotation.x = Math.PI / 2;
+  scene.add(ring2);
+
+  // Lichtsäule nach unten
   const beamMat = new THREE.MeshBasicMaterial({
-    color: 0x00ffcc, transparent:true, opacity:0.32,
-    depthWrite:false, side:THREE.DoubleSide
+    color: coreCol, transparent:true, opacity:0.22,
+    side:THREE.DoubleSide, depthWrite:false
   });
   const beam = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.55, 0.55, 90, 12, 1, true),
+    new THREE.CylinderGeometry(0.55, 0.55, y, 10, 1, true),
     beamMat
   );
-  beam.position.y = 45;
-  grp.add(beam);
+  beam.position.set(x, y/2, z);
+  scene.add(beam);
 
-  // Schwebender Marker
-  const markerMat = new THREE.MeshBasicMaterial({ color:0x00ffcc, transparent:true, opacity:0.9 });
-  const marker = new THREE.Mesh(new THREE.OctahedronGeometry(0.9), markerMat);
-  marker.position.y = 12;
-  grp.add(marker);
-
-  scene.add(grp);
+  // Punktlicht am Kern
+  const light = new THREE.PointLight(coreCol, 2.5, 30, 2);
+  light.position.set(x, y, z);
+  scene.add(light);
 
   targets.push({
-    pos: new THREE.Vector3(x, 0, z),
-    group: grp, beam, marker,
-    mats: [matOuter, matMid, matInner],
-    beamMat, markerMat,
-    hit: false
+    pos: new THREE.Vector3(x, y, z),
+    baseY: y,
+    core, ring, ring2, beam, light,
+    coreMat, ringMat: ring.material, ring2Mat: ring2.material, beamMat,
+    hit: false,
+    phase: Math.random() * Math.PI * 2,
+    color: coreCol
   });
 }
-
-/* ═══════════════════════════ GEBÄUDE (Grid-basiert) ═══════════════════════════ */
-
-const buildings = [];
-const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-const palette = [0x6b7280, 0x7a6a5a, 0x556070, 0x807464, 0x4e5866, 0x8a7f70, 0x5a6b7a, 0x74685c];
-
-const GRID = 11;
-const CELL = 38;
-
-for (let gx = 0; gx < GRID; gx++) {
-  for (let gz = 0; gz < GRID; gz++) {
-    const cx = (gx - (GRID-1)/2) * CELL;
-    const cz = (gz - (GRID-1)/2) * CELL;
-
-    // Spawn/Reload-Bereich freihalten
-    if (Math.hypot(cx, cz) < 32) continue;
-
-    // Ziele freihalten
-    let tooClose = false;
-    for (const t of targets) {
-      if (Math.hypot(cx - t.pos.x, cz - t.pos.z) < 22) { tooClose = true; break; }
-    }
-    if (tooClose) continue;
-
-    // Zufällig aussetzen für mehr Offenheit
-    if (Math.random() < 0.28) continue;
-
-    const x = cx + (Math.random() - 0.5) * CELL * 0.45;
-    const z = cz + (Math.random() - 0.5) * CELL * 0.45;
-
-    const w = 7 + Math.random() * 17;
-    const h = 7 + Math.random() * 46;
-    const d = 7 + Math.random() * 17;
-
-    const m = new THREE.Mesh(boxGeo, new THREE.MeshStandardMaterial({
-      color: palette[(Math.random() * palette.length) | 0],
-      roughness: 0.85, metalness: 0.1
-    }));
-    m.scale.set(w, h, d);
-    m.position.set(x, h / 2, z);
-    scene.add(m);
-
-    // Antennen-Spitzen auf manchen Türmen
-    if (h > 30 && Math.random() < 0.5) {
-      const antMat = new THREE.MeshStandardMaterial({ color:0x222228, roughness:0.6 });
-      const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 6, 6), antMat);
-      ant.position.set(x, h + 3, z);
-      scene.add(ant);
-    }
-
-    buildings.push({
-      minX: x - w/2 - 0.7, maxX: x + w/2 + 0.7,
-      minY: -1,            maxY: h + 0.7,
-      minZ: z - d/2 - 0.7, maxZ: z + d/2 + 0.7
-    });
-  }
-}
-
-/* ═══════════════════════════ RELOAD PAD ═══════════════════════════ */
-
-const PAD_RADIUS = 12;
-
-const padDisc = new THREE.Mesh(
-  new THREE.CircleGeometry(PAD_RADIUS, 56),
-  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.15, side:THREE.DoubleSide })
-);
-padDisc.rotation.x = -Math.PI/2; padDisc.position.y = 0.09;
-scene.add(padDisc);
-
-const padRing = new THREE.Mesh(
-  new THREE.RingGeometry(PAD_RADIUS - 1.0, PAD_RADIUS, 64),
-  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.75, side:THREE.DoubleSide })
-);
-padRing.rotation.x = -Math.PI/2; padRing.position.y = 0.11;
-scene.add(padRing);
-
-const padRing2 = new THREE.Mesh(
-  new THREE.RingGeometry(PAD_RADIUS * 0.5, PAD_RADIUS * 0.5 + 0.6, 48),
-  new THREE.MeshBasicMaterial({ color:0x00ff88, transparent:true, opacity:0.4, side:THREE.DoubleSide })
-);
-padRing2.rotation.x = -Math.PI/2; padRing2.position.y = 0.11;
-scene.add(padRing2);
 
 /* ═══════════════════════════ DROHNE ═══════════════════════════ */
 
 const GRAVITY    = 20.0;
 const MAX_THRUST = 56.0;
 const DRAG       = 0.42;
-const BOMB_DRAG  = 0.06;
 
 const PITCH_RATE = 3.1;
 const ROLL_RATE  = 4.6;
 const YAW_RATE   = 2.1;
 const THR_RATE   = 1.25;
 
+const BOOST_MULT = 1.9;
+
 const dronePos  = new THREE.Vector3();
 const droneVel  = new THREE.Vector3();
 const droneQuat = new THREE.Quaternion();
 let throttle = 0.40;
+let boosting = false;
 
-const MAX_AMMO = 15;
-const BOMB_COOLDOWN = 0.4;
-let ammo = MAX_AMMO;
-let dropCooldown = 0;
-
-let state = 'idle';
-let timeLeft = 90;
+let state = 'idle';       // idle | flying | exploding | finished
+let respawnTimer = 0;
+let timeLeft = 120;
 let score = 0;
 let targetsHit = 0;
-let bestScore = parseInt(localStorage.getItem('fpv_striker_best') || '0', 10);
+let bestScore = parseInt(localStorage.getItem('fpv_impact_best') || '0', 10);
 
-/* ═══════════════════════════ BOMBEN / EFFEKTE ═══════════════════════════ */
+const HIT_RADIUS = 5.0;
+const GROUND_HIT_Y = 1.4;
 
-const bombs = [];
+/* ═══════════════════════════ EFFEKTE ═══════════════════════════ */
+
 const explosions = [];
-
-const BOMB_GEO = new THREE.SphereGeometry(0.3, 10, 8);
-BOMB_GEO.scale(1, 1.9, 1);
-const BOMB_MAT = new THREE.MeshStandardMaterial({
-  color: 0x2e2e34, emissive: 0xff5522, emissiveIntensity: 0.8,
-  roughness: 0.4, metalness: 0.8
-});
-
 const EXPLO_GEO = new THREE.SphereGeometry(1, 16, 12);
 const RING_GEO  = new THREE.RingGeometry(0.9, 1.4, 40);
 
-/* ═══════════════════════════ IMPACT-MARKER ═══════════════════════════ */
+function spawnExplosion(pos, color) {
+  const c = color || new THREE.Color(0xffbb33);
 
-const impactMat = new THREE.MeshBasicMaterial({
-  color:0xff3366, transparent:true, opacity:0.85, side:THREE.DoubleSide, depthWrite:false
-});
-const impactMarker = new THREE.Mesh(new THREE.RingGeometry(1.1, 1.6, 44), impactMat);
-impactMarker.rotation.x = -Math.PI/2;
-impactMarker.position.y = 0.2;
-impactMarker.visible = false;
-scene.add(impactMarker);
+  const sphMat = new THREE.MeshBasicMaterial({
+    color:c, transparent:true, opacity:0.95, depthWrite:false
+  });
+  const sph = new THREE.Mesh(EXPLO_GEO, sphMat);
+  sph.position.copy(pos);
+  sph.scale.setScalar(0.6);
+  scene.add(sph);
 
-/* ═══════════════════════════ START-POSITION ═══════════════════════════ */
+  const rMat = new THREE.MeshBasicMaterial({
+    color:0xffffff, transparent:true, opacity:0.95,
+    side:THREE.DoubleSide, depthWrite:false
+  });
+  const ring = new THREE.Mesh(RING_GEO, rMat);
+  ring.rotation.x = -Math.PI/2;
+  ring.position.copy(pos);
+  scene.add(ring);
 
+  // zweiter Ring senkrecht
+  const ring2 = new THREE.Mesh(RING_GEO, rMat.clone());
+  ring2.position.copy(pos);
+  scene.add(ring2);
+
+  // Blitz-Licht
+  const flash = new THREE.PointLight(c, 8, 60, 2);
+  flash.position.copy(pos);
+  scene.add(flash);
+
+  explosions.push({
+    sph, ring, ring2, flash, life:0, dur:0.65,
+    origin: pos.clone()
+  });
+
+  beep(120, 0.2, 'sawtooth', 0.12);
+  beep(70,  0.35, 'square', 0.08);
+}
+
+/* ═══════════════════════════ START ═══════════════════════════ */
+
+const UP = new THREE.Vector3(0, 1, 0);
 const _lookDummy = new THREE.Object3D();
 
 function placeAtStart() {
-  // Über dem Zentrum, leicht nach +Z geneigt
-  dronePos.set(0, 55, 0);
+  dronePos.set(0, 42, 95);
   droneVel.set(0, 0, 0);
-
   _lookDummy.position.copy(dronePos);
-  _lookDummy.lookAt(0, 10, 60);
+  _lookDummy.lookAt(0, 20, 0);
   droneQuat.copy(_lookDummy.quaternion);
+  throttle = 0.40;
 }
 placeAtStart();
 
@@ -490,10 +501,7 @@ addEventListener('keydown', e => {
   keys[k] = true;
 
   if (!audioReady) initAudio();
-
   if (state === 'idle' || state === 'finished') { startRace(); return; }
-
-  if (k === ' ' && !e.repeat) tryDrop();
 });
 addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
@@ -501,14 +509,13 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 /* ══ Gamepad ══ */
 const padState = {
   connected: false, name: '',
-  throttle: null, pitch: 0, roll: 0, yaw: 0, drop: false
+  throttle: null, pitch: 0, roll: 0, yaw: 0, boost: false
 };
-let prevDropBtn = false;
 
 function pollGamepad() {
   padState.throttle = null;
   padState.pitch = padState.roll = padState.yaw = 0;
-  padState.drop = false;
+  padState.boost = false;
 
   if (!navigator.getGamepads) return;
   const pads = navigator.getGamepads();
@@ -529,7 +536,7 @@ function pollGamepad() {
     padState.pitch =  ry;
 
     const b = gp.buttons;
-    padState.drop = !!(b[0]?.pressed || b[7]?.pressed || b[5]?.pressed);
+    padState.boost = !!(b[6]?.pressed || b[7]?.pressed || b[5]?.pressed);
     return;
   }
 }
@@ -620,7 +627,8 @@ function setupStick(zoneEl, baseEl, knobEl, stick) {
   zoneEl.addEventListener('lostpointercapture', onUp);
 }
 
-const dropBtnEl = document.getElementById('dropBtn');
+const boostBtnEl = document.getElementById('boostBtn');
+let touchBoosting = false;
 
 if (isTouch) {
   document.getElementById('touchControls').classList.add('show');
@@ -631,17 +639,17 @@ if (isTouch) {
              document.getElementById('baseRight'),
              document.getElementById('knobRight'), rightStick);
 
-  dropBtnEl.addEventListener('pointerdown', e => {
+  boostBtnEl.addEventListener('pointerdown', e => {
     e.preventDefault();
-    dropBtnEl.classList.add('active');
+    boostBtnEl.classList.add('active');
+    touchBoosting = true;
     if (!audioReady) initAudio();
     if (state === 'idle' || state === 'finished') { startRace(); return; }
-    tryDrop();
   });
-  const rel = () => dropBtnEl.classList.remove('active');
-  dropBtnEl.addEventListener('pointerup', rel);
-  dropBtnEl.addEventListener('pointercancel', rel);
-  dropBtnEl.addEventListener('pointerleave', rel);
+  const rel = () => { boostBtnEl.classList.remove('active'); touchBoosting = false; };
+  boostBtnEl.addEventListener('pointerup', rel);
+  boostBtnEl.addEventListener('pointercancel', rel);
+  boostBtnEl.addEventListener('pointerleave', rel);
 }
 
 updatePadIndicator();
@@ -672,7 +680,7 @@ function beep(freq, dur, type = 'sine', vol = 0.09) {
 /* ═══════════════════════════ UI ═══════════════════════════ */
 
 const $ = id => document.getElementById(id);
-const hTargets = $('hTargets'), hAmmo = $('hAmmo'), hScore = $('hScore'),
+const hTargets = $('hTargets'), hScore = $('hScore'),
       hTime = $('hTime'), hSpeed = $('hSpeed'), hAlt = $('hAlt'),
       hStatus = $('hStatus'),
       thrFill = $('thrFill'), thrVal = $('thrVal'),
@@ -715,27 +723,20 @@ function startRace() {
   overlay.style.display = 'none';
 
   state = 'flying';
-  timeLeft = 90;
+  timeLeft = 120;
   score = 0;
   targetsHit = 0;
-  ammo = MAX_AMMO;
-  dropCooldown = 0;
-  throttle = 0.40;
+  respawnTimer = 0;
 
   targets.forEach(t => {
     t.hit = false;
-    t.mats[0].color.set(0x00ddff);
-    t.mats[1].color.set(0xffee44);
-    t.mats[2].color.set(0xff3366);
-    t.marker.visible = true;
+    t.core.visible = true;
+    t.ring.visible = true;
+    t.ring2.visible = true;
     t.beam.visible = true;
-    t.markerMat.color.set(0x00ffcc);
-    t.beamMat.color.set(0x00ffcc);
-    t.beamMat.opacity = 0.32;
+    t.light.visible = true;
+    t.pos.y = t.baseY;
   });
-
-  for (const b of bombs) scene.remove(b.mesh);
-  bombs.length = 0;
 
   placeAtStart();
   beep(880, 0.12, 'square', 0.06);
@@ -743,19 +744,19 @@ function startRace() {
 }
 
 function finishRace() {
-  if (state !== 'flying') return;
+  if (state !== 'flying' && state !== 'exploding') return;
   state = 'finished';
 
   let bonus = 0;
   if (targetsHit >= TARGET_COUNT) {
-    bonus = Math.floor(timeLeft) * 10;
+    bonus = Math.floor(timeLeft) * 15;
     score += bonus;
   }
 
   const isRecord = score > bestScore;
   if (isRecord) {
     bestScore = score;
-    localStorage.setItem('fpv_striker_best', String(bestScore));
+    localStorage.setItem('fpv_impact_best', String(bestScore));
   }
 
   beep(880, 0.14, 'square', 0.08);
@@ -766,112 +767,27 @@ function finishRace() {
 
   overlay.innerHTML = `
     <h1 style="color:${isRecord ? '#ff0' : '#0ff'};text-shadow:0 0 30px ${isRecord ? '#ff0' : '#0ff'}">
-      ${isRecord ? 'NEUER REKORD!' : (allHit ? 'ALLE ZIELE ZERSTÖRT' : 'ZEIT ABGELAUFEN')}
+      ${isRecord ? 'NEUER REKORD!' : (allHit ? 'ALLE ORBS ZERSTÖRT' : 'ZEIT ABGELAUFEN')}
     </h1>
     <p style="font-size:24px;margin-top:12px">
       Punkte: <b style="color:#7fffd4">${score}</b>
     </p>
     ${bonus > 0 ? `<p style="font-size:15px;color:#0f8">+${bonus} Zeitbonus</p>` : ''}
     <p style="font-size:14px;opacity:.75">
-      Ziele: ${targetsHit} / ${TARGET_COUNT} &nbsp;·&nbsp; Rekord: <b style="color:#7fffd4">${bestScore}</b>
+      Orbs: ${targetsHit} / ${TARGET_COUNT} &nbsp;·&nbsp; Rekord: <b style="color:#7fffd4">${bestScore}</b>
     </p>
     <div id="startHint" style="margin-top:30px">— TIPPEN / TASTE FÜR NEUEN VERSUCH —</div>
   `;
   overlay.style.display = 'flex';
 }
 
-/* ═══════════════════════════ ABWERFEN ═══════════════════════════ */
-
-function tryDrop() {
-  if (state !== 'flying') return;
-  if (dropCooldown > 0) return;
-  if (ammo <= 0) {
-    beep(180, 0.1, 'square', 0.05);
-    showMsg('KEINE MUNITION', '#f66', 600);
-    return;
-  }
-
-  ammo--;
-  dropCooldown = BOMB_COOLDOWN;
-
-  const mesh = new THREE.Mesh(BOMB_GEO, BOMB_MAT);
-  mesh.position.copy(dronePos);
-  scene.add(mesh);
-
-  bombs.push({ mesh, vel: droneVel.clone(), age: 0 });
-
-  beep(520, 0.07, 'square', 0.05);
-}
-
-function spawnExplosion(pos) {
-  const sphMat = new THREE.MeshBasicMaterial({
-    color:0xffbb33, transparent:true, opacity:0.95, depthWrite:false
-  });
-  const sph = new THREE.Mesh(EXPLO_GEO, sphMat);
-  sph.position.copy(pos);
-  sph.scale.setScalar(0.6);
-  scene.add(sph);
-
-  const rMat = new THREE.MeshBasicMaterial({
-    color:0xffdd55, transparent:true, opacity:0.9,
-    side:THREE.DoubleSide, depthWrite:false
-  });
-  const ring = new THREE.Mesh(RING_GEO, rMat);
-  ring.rotation.x = -Math.PI/2;
-  ring.position.copy(pos);
-  ring.position.y = 0.3;
-  scene.add(ring);
-
-  explosions.push({ sph, ring, life:0, dur:0.55 });
-
-  beep(140, 0.18, 'sawtooth', 0.10);
-  beep(80,  0.30, 'square', 0.07);
-}
-
-function checkHits(pos) {
-  for (const t of targets) {
-    if (t.hit) continue;
-    const d = Math.hypot(pos.x - t.pos.x, pos.z - t.pos.z);
-    if (d < 4.2) {
-      t.hit = true;
-      targetsHit++;
-
-      let pts = d < 1.6 ? 100 : d < 2.9 ? 60 : 30;
-      score += pts;
-
-      t.mats[0].color.set(0x22ff44);
-      t.mats[1].color.set(0x22ff44);
-      t.mats[2].color.set(0x22ff44);
-      t.marker.visible = false;
-      t.beamMat.color.set(0x22ff44);
-      t.beamMat.opacity = 0.15;
-
-      if (pts >= 100) { showMsg('BULLSEYE! +100', '#ff0', 900); beep(1600, 0.12, 'square', 0.09); }
-      else if (pts >= 60) { showMsg('TREFFER! +60', '#0f8', 800); beep(1200, 0.10, 'square', 0.08); }
-      else { showMsg('TREFFER +30', '#0fc', 700); beep(900, 0.09, 'square', 0.07); }
-
-      if (targetsHit >= TARGET_COUNT) setTimeout(finishRace, 350);
-      return;
-    }
-  }
-}
-
-/* ═══════════════════════════ IMPACT-PREDICTION ═══════════════════════════ */
-
-const _p = new THREE.Vector3();
-const _v = new THREE.Vector3();
-
-function computeImpact() {
-  _p.copy(dronePos);
-  _v.copy(droneVel);
-  const step = 1/50;
-  for (let i = 0; i < 260; i++) {
-    _v.y -= GRAVITY * step;
-    _v.multiplyScalar(1 / (1 + BOMB_DRAG * step));
-    _p.addScaledVector(_v, step);
-    if (_p.y <= 0.25) return _p;
-  }
-  return null;
+function triggerImpact(pos, hitTarget) {
+  state = 'exploding';
+  respawnTimer = 1.0;
+  droneVel.set(0, 0, 0);
+  spawnExplosion(pos, hitTarget ? hitTarget.color : new THREE.Color(0xff8844));
+  flash(hitTarget ? '#ffffff' : '#ff6633', hitTarget ? 0.4 : 0.55);
+  if (!hitTarget) showMsg('CRASH', '#f66', 800);
 }
 
 /* ═══════════════════════════ UPDATE ═══════════════════════════ */
@@ -879,16 +795,27 @@ function computeImpact() {
 const tmpV = new THREE.Vector3();
 const tmpQ = new THREE.Quaternion();
 const tmpE = new THREE.Euler();
+const _bombUp = new THREE.Vector3(0,1,0);
 
 function update(dt) {
-  const flying = (state === 'flying');
+  const now = performance.now() * 0.001;
 
-  if (flying) {
+  /* ═══ Timer ═══ */
+  if (state === 'flying') {
     timeLeft -= dt;
     if (timeLeft <= 0) { timeLeft = 0; finishRace(); }
   }
 
-  dropCooldown = Math.max(0, dropCooldown - dt);
+  /* ═══ Respawn ═══ */
+  if (state === 'exploding') {
+    respawnTimer -= dt;
+    if (respawnTimer <= 0) {
+      placeAtStart();
+      state = 'flying';
+    }
+  }
+
+  const flying = (state === 'flying');
 
   /* ═══ INPUT ═══ */
 
@@ -897,11 +824,9 @@ function update(dt) {
   const kbYaw   = flying ? (((keys['q'] || keys['arrowleft']) ? 1 : 0)
                           - ((keys['e'] || keys['arrowright']) ? 1 : 0)) : 0;
   const kbThr   = flying ? ((keys['arrowup'] ? 1 : 0) - (keys['arrowdown'] ? 1 : 0)) : 0;
+  const kbBoost = flying && (keys['shift'] || keys[' ']);
 
   pollGamepad();
-
-  if (padState.drop && !prevDropBtn && flying) tryDrop();
-  prevDropBtn = padState.drop;
 
   const gpPitch = flying ? padState.pitch : 0;
   const gpRoll  = flying ? padState.roll  : 0;
@@ -913,6 +838,8 @@ function update(dt) {
   const tYaw   = tLeftActive  ? -leftStick.x  : 0;
   const tPitch = tRightActive ?  rightStick.y : 0;
   const tRoll  = tRightActive ? -rightStick.x : 0;
+
+  boosting = flying && (kbBoost || padState.boost || touchBoosting);
 
   /* ═══ ROTATION ═══ */
 
@@ -947,7 +874,8 @@ function update(dt) {
 
   if (flying) {
     const up = tmpV.set(0, 1, 0).applyQuaternion(droneQuat);
-    droneVel.addScaledVector(up, throttle * MAX_THRUST * dt);
+    const thrust = throttle * MAX_THRUST * (boosting ? BOOST_MULT : 1);
+    droneVel.addScaledVector(up, thrust * dt);
     droneVel.y -= GRAVITY * dt;
     droneVel.multiplyScalar(1 / (1 + DRAG * dt));
     dronePos.addScaledVector(droneVel, dt);
@@ -957,84 +885,67 @@ function update(dt) {
 
   if (flying) {
     // Boden
-    if (dronePos.y < 1.4) {
-      dronePos.y = 1.4;
-      if (droneVel.y < 0) droneVel.y = -droneVel.y * 0.18;
-      droneVel.x *= 0.92;
-      droneVel.z *= 0.92;
+    if (dronePos.y < GROUND_HIT_Y) {
+      dronePos.y = GROUND_HIT_Y;
+      triggerImpact(dronePos.clone(), null);
     }
 
-    // Gebäude – sanft herausschieben (Achse mit kleinster Überschneidung)
-    for (const b of buildings) {
-      if (dronePos.x > b.minX && dronePos.x < b.maxX &&
-          dronePos.y > b.minY && dronePos.y < b.maxY &&
-          dronePos.z > b.minZ && dronePos.z < b.maxZ) {
-
-        const dxMin = dronePos.x - b.minX;
-        const dxMax = b.maxX - dronePos.x;
-        const dzMin = dronePos.z - b.minZ;
-        const dzMax = b.maxZ - dronePos.z;
-        const dyMin = dronePos.y - b.minY;
-        const dyMax = b.maxY - dronePos.y;
-        const m = Math.min(dxMin, dxMax, dzMin, dzMax, dyMin, dyMax);
-
-        if      (m === dyMax) { dronePos.y = b.maxY + 0.1; if (droneVel.y < 0) droneVel.y = 0; }
-        else if (m === dyMin) { dronePos.y = b.minY - 0.1; if (droneVel.y > 0) droneVel.y = 0; }
-        else if (m === dxMin) { dronePos.x = b.minX - 0.1; droneVel.x = Math.min(0, droneVel.x); }
-        else if (m === dxMax) { dronePos.x = b.maxX + 0.1; droneVel.x = Math.max(0, droneVel.x); }
-        else if (m === dzMin) { dronePos.z = b.minZ - 0.1; droneVel.z = Math.min(0, droneVel.z); }
-        else                  { dronePos.z = b.maxZ + 0.1; droneVel.z = Math.max(0, droneVel.z); }
+    // Säulen
+    if (state === 'flying') {
+      for (const p of pillars) {
+        if (dronePos.x > p.minX && dronePos.x < p.maxX &&
+            dronePos.y > p.minY && dronePos.y < p.maxY &&
+            dronePos.z > p.minZ && dronePos.z < p.maxZ) {
+          triggerImpact(dronePos.clone(), null);
+          break;
+        }
       }
     }
 
-    // Weltgrenze (weich, kein Crash)
-    const distC = Math.hypot(dronePos.x, dronePos.z);
-    const HARD_LIMIT = 480;
-    if (distC > HARD_LIMIT) {
-      const k = HARD_LIMIT / distC;
-      dronePos.x *= k;
-      dronePos.z *= k;
-      droneVel.x *= -0.3;
-      droneVel.z *= -0.3;
+    // Arena-Grenze (weich zurückdrücken)
+    if (state === 'flying') {
+      const dc = Math.hypot(dronePos.x, dronePos.z);
+      if (dc > ARENA_R) {
+        const k = ARENA_R / dc;
+        dronePos.x *= k;
+        dronePos.z *= k;
+        droneVel.x *= -0.3;
+        droneVel.z *= -0.3;
+      }
     }
 
-    /* ═══ RELOAD PAD ═══ */
-    if (distC < PAD_RADIUS && dronePos.y < 24 && ammo < MAX_AMMO) {
-      ammo = MAX_AMMO;
-      beep(1400, 0.09, 'sine', 0.06);
-      beep(1900, 0.09, 'sine', 0.05);
-      showMsg('MUNITION AUFGEFÜLLT', '#0f8', 700);
-    }
-  }
+    /* ═══ ORB-TREFFER ═══ */
+    if (state === 'flying') {
+      for (const t of targets) {
+        if (t.hit) continue;
+        const d = dronePos.distanceTo(t.pos);
+        if (d < HIT_RADIUS) {
+          t.hit = true;
+          targetsHit++;
 
-  /* ═══ BOMBEN ═══ */
+          // Punkte: je näher am Zentrum desto mehr
+          const pts = d < 2.0 ? 150 : d < 3.5 ? 100 : 70;
+          score += pts;
 
-  for (let i = bombs.length - 1; i >= 0; i--) {
-    const b = bombs[i];
-    b.age += dt;
+          // Visuell ausblenden
+          t.core.visible = false;
+          t.ring.visible = false;
+          t.ring2.visible = false;
+          t.beam.visible = false;
+          t.light.visible = false;
 
-    b.vel.y -= GRAVITY * dt;
-    b.vel.multiplyScalar(1 / (1 + BOMB_DRAG * dt));
-    b.mesh.position.addScaledVector(b.vel, dt);
+          triggerImpact(dronePos.clone(), t);
 
-    const spd = b.vel.length();
-    if (spd > 0.15) {
-      tmpV.copy(b.vel).divideScalar(spd);
-      b.mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), tmpV);
-    }
+          if (pts >= 150) showMsg('BULLSEYE +150', '#ff0', 900);
+          else if (pts >= 100) showMsg('IMPACT +100', '#0f8', 800);
+          else showMsg('TREFFER +70', '#0fc', 700);
 
-    if (b.mesh.position.y <= 0.3) {
-      b.mesh.position.y = 0.3;
-      spawnExplosion(b.mesh.position.clone());
-      checkHits(b.mesh.position);
-      scene.remove(b.mesh);
-      bombs.splice(i, 1);
-      continue;
-    }
-
-    if (b.age > 25 || b.mesh.position.lengthSq() > 900 * 900) {
-      scene.remove(b.mesh);
-      bombs.splice(i, 1);
+          if (targetsHit >= TARGET_COUNT) {
+            setTimeout(finishRace, 900);
+          }
+          break;
+        }
+      }
     }
   }
 
@@ -1046,56 +957,64 @@ function update(dt) {
     const t = e.life / e.dur;
 
     if (t >= 1) {
-      scene.remove(e.sph); scene.remove(e.ring);
+      scene.remove(e.sph);
+      scene.remove(e.ring);
+      scene.remove(e.ring2);
+      scene.remove(e.flash);
       e.sph.material.dispose();
       e.ring.material.dispose();
+      e.ring2.material.dispose();
       explosions.splice(i, 1);
       continue;
     }
 
-    e.sph.scale.setScalar(0.6 + t * 8);
+    e.sph.scale.setScalar(0.6 + t * 9);
     e.sph.material.opacity = 0.95 * (1 - t);
 
-    e.ring.scale.setScalar(1 + t * 11);
-    e.ring.material.opacity = 0.9 * (1 - t);
+    e.ring.scale.setScalar(1 + t * 14);
+    e.ring.material.opacity = 0.95 * (1 - t);
+
+    e.ring2.scale.setScalar(1 + t * 11);
+    e.ring2.material.opacity = 0.9 * (1 - t);
+
+    e.flash.intensity = 8 * (1 - t);
   }
 
-  /* ═══ ZIEL-ANIMATION ═══ */
+  /* ═══ ORB-ANIMATION ═══ */
 
-  const now = performance.now() * 0.001;
   for (const t of targets) {
-    if (!t.hit) {
-      t.marker.rotation.y = now * 1.8;
-      t.marker.position.y = 12 + Math.sin(now * 2 + t.pos.x * 0.1) * 1.2;
-      t.markerMat.opacity = 0.7 + Math.sin(now * 3.5) * 0.25;
+    if (t.hit) continue;
+    const bob = Math.sin(now * 1.6 + t.phase) * 1.6;
+    t.pos.y = t.baseY + bob;
 
-      t.beamMat.opacity = 0.25 + Math.sin(now * 2 + t.pos.z * 0.1) * 0.12;
-      t.mats[0].opacity = 0.8 + Math.sin(now * 3) * 0.15;
-    }
-  }
+    t.core.position.copy(t.pos);
+    t.ring.position.copy(t.pos);
+    t.ring2.position.copy(t.pos);
+    t.light.position.copy(t.pos);
+    t.beam.position.set(t.pos.x, t.pos.y / 2, t.pos.z);
+    t.beam.scale.y = Math.max(0.05, t.pos.y / t.baseY);
 
-  /* ═══ IMPACT-MARKER ═══ */
+    t.core.rotation.x = now * 0.8 + t.phase;
+    t.core.rotation.y = now * 1.1 + t.phase;
 
-  if (flying) {
-    const ip = computeImpact();
-    if (ip && Math.hypot(ip.x - dronePos.x, ip.z - dronePos.z) < 260) {
-      impactMarker.visible = true;
-      impactMarker.position.set(ip.x, 0.2, ip.z);
-      const s = 1 + Math.sin(now * 8) * 0.12;
-      impactMarker.scale.setScalar(s);
-      impactMat.opacity = 0.55 + Math.sin(now * 8) * 0.25;
-    } else {
-      impactMarker.visible = false;
-    }
-  } else {
-    impactMarker.visible = false;
+    t.ring.rotation.x = now * 1.2;
+    t.ring.rotation.y = now * 0.7;
+    t.ring2.rotation.y = now * -1.4;
+    t.ring2.rotation.z = now * 0.9;
+
+    // Pulsieren
+    const pulse = 1 + Math.sin(now * 3 + t.phase) * 0.08;
+    t.ring.scale.setScalar(pulse);
+    t.ring2.scale.setScalar(pulse * 1.05);
+    t.coreMat.emissiveIntensity = 1.2 + Math.sin(now * 4 + t.phase) * 0.4;
+    t.light.intensity = 2.2 + Math.sin(now * 4 + t.phase) * 0.8;
   }
 
   /* ═══ KAMERA ═══ */
 
   camera.position.copy(dronePos);
   if (flying && throttle > 0.05) {
-    const vib = throttle * 0.0035;
+    const vib = throttle * 0.0035 * (boosting ? 1.8 : 1);
     camera.position.x += (Math.random() - 0.5) * vib;
     camera.position.y += (Math.random() - 0.5) * vib;
     camera.position.z += (Math.random() - 0.5) * vib;
@@ -1111,22 +1030,19 @@ function update(dt) {
   hScore.textContent   = score;
   hTime.textContent    = fmtTime(timeLeft);
 
-  hAmmo.textContent = ammo;
-  hAmmo.classList.toggle('ammo-low', ammo <= 3);
-
   thrFill.style.height = (throttle * 100) + '%';
   thrVal.textContent = Math.round(throttle * 100);
 
-  if (isTouch) {
-    dropBtnEl.classList.toggle('cool', dropCooldown > 0 || ammo <= 0);
-  }
-
   hStatus.textContent = state === 'finished' ? 'FERTIG'
+                      : state === 'exploding' ? 'RESPAWN...'
                       : state === 'idle' ? 'BEREIT'
+                      : boosting ? 'BOOST'
                       : padState.connected ? 'GAMEPAD'
                       : (tLeftActive || tRightActive) ? 'TOUCH'
                       : 'ACRO MODE';
-  hStatus.style.color = state === 'finished' ? '#0f8' : '#7fffd4';
+  hStatus.style.color = state === 'exploding' ? '#f66'
+                      : state === 'finished' ? '#0f8'
+                      : boosting ? '#fc6' : '#7fffd4';
 
   tmpE.setFromQuaternion(droneQuat, 'YXZ');
   const pitchDeg = tmpE.x * 180 / Math.PI;
@@ -1145,11 +1061,11 @@ function animate(now) {
   if (dt > 0.05) dt = 0.05;
   try { update(dt); } catch (err) {
     errEl.style.display = 'block';
-    errEl.textContent = 'Update-Fehler: ' + err.message + '\n' + (err.stack || '');
+    errEl.textContent = 'Update: ' + err.message + '\n' + (err.stack || '');
   }
   try { renderer.render(scene, camera); } catch (err) {
     errEl.style.display = 'block';
-    errEl.textContent = 'Render-Fehler: ' + err.message;
+    errEl.textContent = 'Render: ' + err.message;
   }
 }
 requestAnimationFrame(animate);
